@@ -1,6 +1,6 @@
 # trawlx
 
-A simple Python pipeline that gets structured Twitter data — text, likes, retweets, replies — without authentication. DuckDuckGo finds the tweets, fxtwitter returns the JSON, you do what you want with it.
+A simple Python pipeline that gets structured Twitter data — text, likes, retweets, threads — without authentication. DuckDuckGo finds the tweets, fxtwitter returns the JSON, you do what you want with it.
 
 ## Install
 
