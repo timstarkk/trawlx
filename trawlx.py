@@ -129,7 +129,7 @@ def fetch_replies(tweet_id: str, username: str) -> list[dict]:
         return []
 
 
-def build_claude_prompt(tweets: list[dict]) -> str:
+def build_claude_prompt(tweets: list[dict], queries: list[str] | None = None) -> str:
     """Format tweets into a prompt for Claude summarization."""
     lines = []
     for i, t in enumerate(tweets, 1):
@@ -142,28 +142,18 @@ def build_claude_prompt(tweets: list[dict]) -> str:
                 lines.append(f"  @{r['author']}: {r['text']}")
     tweet_block = "\n".join(lines)
 
-    return f"""You are producing a daily digest of X/Twitter posts about Claude, AI coding tools, MCP, and related topics.
+    query_context = ""
+    if queries:
+        query_context = f"\n\nThe user searched for: {', '.join(queries)}\n"
 
-Below are {len(tweets)} tweets collected today, ranked by engagement. Analyze them and produce a structured markdown report.
+    return f"""You are producing a daily digest of X/Twitter posts.{query_context}
+Below are {len(tweets)} tweets collected today, ranked by engagement. Analyze them and produce a structured markdown report relevant to the search query.
 
 ## Output format
 
-Use these sections (skip any section with no relevant content):
+Start with a heading: # [Topic] Daily Digest — [today's date]
 
-### Key Announcements
-Major product launches, updates, or official news.
-
-### Tips & Workflows
-Practical tips, prompts, config snippets, or workflow advice.
-
-### Tools & Integrations
-New MCP servers, extensions, integrations, or open-source projects.
-
-### Community Discussion
-Interesting debates, opinions, or threads.
-
-### Notable Threads
-Longer threads worth reading in full (link to them).
+Then organize into 3-5 sections that fit the content. Choose section names that match what the tweets are actually about (e.g. for sports: Key News, Match Analysis, Transfer Rumors, Fan Discussion; for tech: Announcements, Tips & Workflows, Tools, Community Discussion). Skip any section with no relevant content.
 
 For each item:
 - One-line summary of the insight
@@ -243,9 +233,9 @@ def format_markdown(tweets: list[dict], date: str, output_dir: Path, output_file
     print(f"Digest saved: {output_file}")
 
 
-def format_claude(tweets: list[dict], date: str, output_dir: Path, output_file: Path | None = None, **_) -> None:
+def format_claude(tweets: list[dict], date: str, output_dir: Path, output_file: Path | None = None, queries: list[str] | None = None, **_) -> None:
     """Summarize tweets with Claude and write markdown output."""
-    prompt = build_claude_prompt(tweets)
+    prompt = build_claude_prompt(tweets, queries=queries)
     log.info(f"Sending {len(tweets)} tweets to claude for summarization...")
     summary = summarize(prompt)
 
@@ -253,15 +243,21 @@ def format_claude(tweets: list[dict], date: str, output_dir: Path, output_file: 
         log.error("Summarization returned empty. Aborting.")
         return
 
-    header = f"# AI/Claude Daily Digest — {date}\n\n"
-    header += f"*Generated from {len(tweets)} top posts on X/Twitter*\n\n"
+    subtitle = f"\n\n*Generated from {len(tweets)} top posts on X/Twitter*\n"
+
+    # Insert subtitle after the first heading line
+    lines = summary.split("\n", 1)
+    if len(lines) == 2:
+        output = lines[0] + subtitle + lines[1]
+    else:
+        output = summary + subtitle
 
     if not output_file:
         output_dir.mkdir(parents=True, exist_ok=True)
         output_file = output_dir / f"{date}.md"
     else:
         output_file.parent.mkdir(parents=True, exist_ok=True)
-    output_file.write_text(header + summary + "\n")
+    output_file.write_text(output + "\n")
     log.info(f"Digest written to {output_file}")
     print(f"Digest saved: {output_file}")
 
@@ -635,7 +631,7 @@ def main():
     if args.output:
         name = args.output if args.output.endswith(".md") else f"{args.output}.md"
         output_file = output_dir / name
-    formatters[mode](tweets=tweets, date=today, output_dir=output_dir, output_file=output_file)
+    formatters[mode](tweets=tweets, date=today, output_dir=output_dir, output_file=output_file, queries=queries)
 
 
 if __name__ == "__main__":
