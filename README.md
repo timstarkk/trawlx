@@ -1,6 +1,6 @@
 # trawlx
 
-Zero-auth X/Twitter search, rank, and digest pipeline. Searches DuckDuckGo for tweets, fetches data via fxtwitter API, and outputs structured digests — no Twitter API key needed.
+A simple Python pipeline that gets structured Twitter data — text, likes, retweets, replies — without authentication. DuckDuckGo finds the tweets, fxtwitter returns the JSON, you do what you want with it.
 
 ## Install
 
