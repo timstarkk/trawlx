@@ -1,0 +1,8 @@
+queries:
+  - '("claude code" OR "computer use" OR mcp OR "claude.md" OR "CLAUDE.md") claude'
+max_results_per_query: 20
+max_tweets_to_summarize: 30
+min_likes: 3
+fetch_replies: true
+mode: markdown
+output_dir: "~/Documents/trawlx"

@@ -1,0 +1,20 @@
+[build-system]
+requires = ["setuptools>=68.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "trawlx"
+version = "0.1.0"
+description = "Zero-auth X/Twitter search, rank, and digest pipeline"
+requires-python = ">=3.10"
+dependencies = [
+    "requests",
+    "pyyaml",
+    "ddgs",
+]
+
+[tool.setuptools]
+py-modules = ["trawlx"]
+
+[project.scripts]
+trawlx = "trawlx:main"
