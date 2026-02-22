@@ -5,7 +5,7 @@ A simple Python pipeline that gets structured Twitter data — text, likes, retw
 ## Install
 
 ```bash
-pipx install ~/code/trawlx
+pip install trawlx
 ```
 
 ## Setup
