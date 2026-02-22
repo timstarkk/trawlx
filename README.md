@@ -105,3 +105,7 @@ trawlx --uninstall-launchd
 Config lives at `~/.config/trawlx/config.yaml`. Queries use DuckDuckGo syntax with `site:x.com` prepended automatically. Results are limited to the last 24 hours.
 
 Logs go to `~/.config/trawlx/logs/`.
+
+## Disclaimer
+
+This tool queries publicly available search engines and public APIs. It does not bypass authentication, access private data, or violate CAPTCHAs. Users are responsible for complying with the terms of service of any platforms they interact with. This project is not affiliated with X/Twitter, DuckDuckGo, or fxtwitter.
